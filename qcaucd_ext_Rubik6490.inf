@@ -1,0 +1,68 @@
+; Rubik Pi 3 extension for Qualcomm's Kodiak Aqstic codec driver (qcaucd6490).
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Extension
+ClassGuid={e2f84ce7-8efa-411c-aa69-97454ca4cb57}
+Provider=%Provider%
+ExtensionId={9C3D2B7A-5E41-4F86-B2A7-8316A0CD0001}
+DriverVer=09/05/2026,1.0.1.0
+CatalogFile=qcaucd_ext_Rubik6490.cat
+PnpLockdown=1
+
+[SourceDisksNames]
+1 = %DiskId1%
+
+[SourceDisksFiles]
+ACDResources.bin = 1
+
+[DestinationDirs]
+ASLBinFile = 13
+
+[ASLBinFile]
+ACDResources.bin
+
+[Manufacturer]
+%Manufacturer%=RubikModels,NTARM64.10.0...16299
+
+[RubikModels.NTARM64.10.0...16299]
+%DeviceDesc%=RubikAucd_Install,ADCM\VEN_QCOM&DEV_0EC1&SUBSYS_RUBI6490
+%DeviceDescInherited%=RubikAucd_Install,ADCM\VEN_QCOM&DEV_0EC1&SUBSYS_IOT06490
+
+[RubikAucd_Install]
+CopyFiles=ASLBinFile
+
+[RubikAucd_Install.HW]
+AddReg=RubikAucd.AddReg
+
+[RubikAucd.AddReg]
+HKR,AUCD\ASLResourceFile,"BinaryPath",0x00000000,%13%\ACDResources.bin
+HKR,AUCD,"IsEMFeatureEnabled",0x00010001,0
+; No codec GPIOs: AUCD._CRS is empty on Rubik.
+HKR,AUCD\GPIO,"NoofGPIOs",0x00010001,0x00000000
+HKR,AUCD\CodecInitializationParameters,"MajorVersion",0x00010001,0x00000000
+HKR,AUCD\CodecInitializationParameters,"MinorVersion",0x00010001,0x00000002
+; Ignored by the 6490 binary but kept for parity with the donor extensions.
+HKR,AUCD\CodecInitializationParameters,"IsWDSPAvailable",0x00010001,0x00000000
+; Jack detection belongs to the ES8316 driver, not WCD MBHC.
+HKR,AUCD\CodecInitializationParameters,"IsMBHCReq",0x00010001,0x00000000
+HKR,AUCD\CodecInitializationParameters,"SwrSleep",0x00010001,0x00000001
+HKR,AUCD\CodecInitializationParameters,"ExternalMicBiasNeeded",0x00010001,0x00000000
+; No WSA/WCD slaves on any bus.
+HKR,AUCD\CodecInitializationParameters\SlaveInfo,"NumSlaveTypes",0x00010001,0x00000000
+; No SoundWire/wakeup interrupts.
+HKR,AUCD\InterruptInfo,"NoofInterrupts",0x00010001,0x00000000
+; MCLK table present but disabled (see header).  Flip MclkState to 1 only as a
+; diagnostic after the ADCM PRM path is proven on hardware.
+HKR,AUCD\MCLK,"NoofMclks",0x00010001,0x00000001
+HKR,AUCD\MCLK\1,"MclkState",0x00010001,0x00000000
+HKR,AUCD\MCLK\1,"MclkId",0x00010001,0x00000300
+HKR,AUCD\MCLK\1,"MclkFreq",0x00010001,0x00BB8000
+
+[Strings]
+Provider="Rubik Pi 3 WoA Project"
+Manufacturer="Rubik Pi 3 WoA Project"
+DeviceDesc="Rubik Pi 3 Qualcomm Aqstic Codec Driver Extension"
+DeviceDescInherited="Rubik Pi 3 Qualcomm Aqstic Codec Driver Extension"
+DiskId1="Rubik Pi 3 Audio Installation Disk"
