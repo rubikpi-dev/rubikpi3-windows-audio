@@ -1,13 +1,16 @@
 ; Rubik Pi 3 extension for Qualcomm's Kodiak Q6A audio miniport (qcaudminiport6490).
 ;
-; Rubik deltas vs Qualcomm IOT extension:
-;   * Speaker render endpoint = ES8316 3.5 mm jack. 
-;   * SpeakerHeadset render endpoint = LT9611 HDMI audio.
-;   * Mic/mic-array/BT endpoints are disabled (no WCD/WSA codec, no I2S
-;     capture graph).
-;   * UseInternalCodec=0 on every endpoint: there is no on-package WCD/WSA.
-;     The jack reads permanently connected for Speaker and SpeakerHeadset
-; 	  by the miniport's static table.
+; Rubik Pi 3:
+;   * Speaker = ES8316 3.5 mm jack on PRIMARY MI2S.
+;   * ExternalDisplay = LT9611 HDMI endpoint, published when OEMBridge registers
+;     the sink with the miniport.
+;   * SpeakerHeadset and MicArray1 are disabled; MicIn is the ES8316 capture
+;     endpoint. Bluetooth endpoint defaults remain as listed in AddReg.
+;   * UseInternalCodec=0 on the board endpoints: there is no WCD/WSA codec.
+;
+; QCRT currently inherits SUBSYS_IOT06490. Qualcomm's IOT miniport extension
+; has a different ExtensionId and can therefore apply alongside this one;
+; remove the overlapping donor extension during Rubik installation.
 ;
 
 [Version]
@@ -16,7 +19,7 @@ Class=Extension
 ClassGUID={e2f84ce7-8efa-411c-aa69-97454ca4cb57}
 provider=%QCOM%
 ExtensionId={656CA7C6-A0D8-4640-8A87-C681C3690AED}
-DriverVer = 09/07/2026,1.0.4444.9373
+DriverVer = 11/09/2026,1.0.4444.9382
 CatalogFile=qcaudminiportRubik_Extension6490.cat
 PnpLockdown=1
 
@@ -26,8 +29,6 @@ PnpLockdown=1
 [Extension_Device.NTARM64]
 %DeviceDesc%=Extension_Device_IOT_Inst, AUCD\VEN_QCOM&DEV_0E29&SUBSYS_RUBI6490
 %DeviceDescInherited%=Extension_Device_IOT_Inst, AUCD\VEN_QCOM&DEV_0E29&SUBSYS_IOT06490
-
-[Extension_Device_IOT_Inst]
 
 [Extension_Device_IOT_Inst.HW]
 AddReg=AUDIOHW_AddReg
